@@ -33,7 +33,7 @@ export default function ProjectPage() {
 
   const fetchProjects = async (value:string = '', page: number = 0) => {
     setResponse({loading: true});
-    const res = await fetch(`/api/projects?term=${value}&page=${page}&limit=10`, {
+    const res = await fetch(`/api/projects?term=${value}&page=${page}&limit=20`, {
       method: "GET",
     });
     const response = await res.json();

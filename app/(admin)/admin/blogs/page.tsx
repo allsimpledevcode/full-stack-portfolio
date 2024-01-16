@@ -34,7 +34,7 @@ export default function BlogsPage() {
   const fetchBlogs = async (value: string = '', page: number = 0) => {
     setResponse({loading: true});
     
-    const apiResponse = await fetch(`/api/blogs?term=${value}&page=${page}&limit=2`, {
+    const apiResponse = await fetch(`/api/blogs?term=${value}&page=${page}&limit=20`, {
       method: "GET",
     }).then((res) => res.json());
 
