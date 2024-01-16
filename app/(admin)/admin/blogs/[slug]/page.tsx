@@ -12,7 +12,7 @@ interface BlogDetailPageProps {
 }
 
 export default function BlogDetailPage({ params }:BlogDetailPageProps) {
-    const [response, setResponse] = useReducer((prev, next) => {
+    const [response, setResponse] = useReducer((prev: any, next: any) => {
         return { ...prev, ...next }
     }, {
         loading: true,

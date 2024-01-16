@@ -1,5 +1,5 @@
 "use client";
-
+// @ts-ignore
 import { Editor, editorProps } from "novel";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, ReloadIcon } from "@radix-ui/react-icons";
@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useCallback, useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
-import Select from "react-select";
+import Select, { MultiValue, OptionProps } from "react-select";
 import { Textarea } from "@/components/ui/textarea";
 
 type Variants = "blog" | "project";
@@ -65,7 +65,7 @@ export default function BlogForm({
 
   const [loading, setLoading] = useState(false);
   const [blogForm, setBlogForm] = useReducer(
-    (prev, next) => {
+    (prev: any, next: any) => {
       return { ...prev, ...next };
     },
     {
@@ -145,23 +145,6 @@ export default function BlogForm({
     }
   };
 
-  const uploadCoverImage = async (e: EventTarget) => {
-    const file = e.target.files[0];
-
-    const response = await fetch("/api/upload", {
-      method: "POST",
-      headers: {
-        "Content-type": file.type,
-        "X-Vercel-Filename": file.name,
-      },
-      body: file,
-    }).then((res) => res.json());
-
-    setBlogForm({
-      cover_url: response.url,
-    });
-  };
-
   return (
     <>
       <div>
@@ -204,7 +187,25 @@ export default function BlogForm({
               />
             )}
           </div>
-          <Input id="picture" type="file" onChange={uploadCoverImage} />
+          <Input id="picture" type="file" onChange={async (e) => {
+            let files = (e.target as HTMLInputElement).files;
+
+            if(files && files?.length > 0) {
+              const file = files[0];
+              const response = await fetch("/api/upload", {
+                method: "POST",
+                headers: {
+                  "Content-type": file.type,
+                  "X-Vercel-Filename": file.name,
+                },
+                body: file,
+              }).then((res) => res.json());
+          
+              setBlogForm({
+                cover_url: response.url,
+              });
+            }
+          }} />
         </div>
       </div>
       <div className="mt-5">
@@ -228,10 +229,12 @@ export default function BlogForm({
           isMulti
           name="tags"
           options={blogsTags}
-          onChange={(value: { name: string }) => {
-            const tags = value.map((v: { name: string }) => v?.name);
+          onChange={(value: MultiValue<{ name: string }>) => {
+            if(value && value.length > 0) {
+              const tags = value.map((v: { name: string }) => v?.name);
 
-            setBlogForm({ tags: tags });
+              setBlogForm({ tags: tags });
+            }
           }}
           className="basic-multi-select"
           classNamePrefix="select"

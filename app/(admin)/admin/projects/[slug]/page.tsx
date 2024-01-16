@@ -12,7 +12,7 @@ interface ProjectDetailPageProps {
 }
 
 export default function ProjectDetailPage({ params }:ProjectDetailPageProps) {
-    const [response, setResponse] = useReducer((prev, next) => {
+    const [response, setResponse] = useReducer((prev: any, next: any) => {
         return { ...prev, ...next }
     }, {
         loading: true,

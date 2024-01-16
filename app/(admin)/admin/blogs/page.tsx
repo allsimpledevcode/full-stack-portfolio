@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button";
 import { TrashIcon, ReloadIcon, MagnifyingGlassIcon, ChevronRightIcon, ChevronLeftIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useReducer, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -20,7 +20,7 @@ export default function BlogsPage() {
   const [loading, setLoading] = useState(false);
 
   const [response, setResponse] = useReducer(
-    (prev, next) => {
+    (prev: any, next: any) => {
       return { ...prev, ...next };
     },
     {
@@ -68,17 +68,15 @@ export default function BlogsPage() {
 
   const debounceAPI = useCallback(debounce((value:string)=> fetchBlogs(value), 1000), [])
 
-  const onChangeSearchTerm = (e: HTMLInputElement) => {
-    setResponse({ searchTerm: e.target.value })
-    debounceAPI(e.target.value)
-  }
-
   return (
     <>
       <div className="flex mb-8 justify-between">
         <div className="relative">
           <MagnifyingGlassIcon className="absolute top-[10px] left-[10px] text-gray-400"/>
-          <Input type="text" placeholder="Enter blog title" className="pl-8" onChange={onChangeSearchTerm}/>
+          <Input type="text" placeholder="Enter blog title" className="pl-8" onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setResponse({ searchTerm: e.target.value })
+            debounceAPI(e.target.value)
+          }}/>
         </div>
         <div className="text-right">
           <Button disabled={response.page === 0 ? true : false} variant="outline" size="icon" onClick={() => {

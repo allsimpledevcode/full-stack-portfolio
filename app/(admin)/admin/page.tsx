@@ -7,8 +7,14 @@ import {
   } from "@/components/ui/card"
 import { useEffect, useReducer } from "react"
 
+interface dataReducer {
+    loading?: boolean,
+    project?: string,
+    blog?: string   
+}
+
 export default function AdminPage() {
-    const [data, setData] = useReducer((prev, next) => {
+    const [data, setData] = useReducer((prev: any, next: any) => {
         return  { ...prev, ...next }
     }, {
         loading: true,

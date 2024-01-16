@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
     let response;
@@ -22,7 +23,7 @@ export async function GET(request: Request) {
     }
     
 
-    return Response.json(response)
+    return NextResponse.json(response)
 }
 
 export async function POST(request: Request) {
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
     
     const response = await supabase.from("blogs").insert(data).select().single();
 
-    return Response.json(response)   
+    return NextResponse.json(response)   
 }
 
 export async function PATCH(request: Request) {
@@ -44,7 +45,7 @@ export async function PATCH(request: Request) {
     
     const response = await supabase.from("blogs").update(data).eq('id', id).select().single();
 
-    return Response.json(response)  
+    return NextResponse.json(response)  
 }
 
 export async function DELETE(request: Request) {
@@ -54,5 +55,5 @@ export async function DELETE(request: Request) {
     
     const response = await supabase.from("blogs").delete().eq('id', data.id);
 
-    return Response.json(response) 
+    return NextResponse.json(response) 
 }

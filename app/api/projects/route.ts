@@ -1,5 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
 const tableName = "projects";
 
@@ -23,7 +24,7 @@ export async function GET(request: Request) {
         response = await supabase.from(tableName).select().ilike('title', `%${term}%`).range(from, to);
     }
     
-    return Response.json(response)
+    return NextResponse.json(response)
 }
 
 export async function POST(request: Request) {
@@ -33,7 +34,7 @@ export async function POST(request: Request) {
     
     const response = await supabase.from(tableName).insert(data).select().single();
 
-    return Response.json(response)   
+    return NextResponse.json(response)   
 }
 
 export async function PATCH(request: Request) {
@@ -45,7 +46,7 @@ export async function PATCH(request: Request) {
     
     const response = await supabase.from(tableName).update(data).eq('id', id).select().single();
 
-    return Response.json(response)  
+    return NextResponse.json(response)  
 }
 
 export async function DELETE(request: Request) {
@@ -55,5 +56,5 @@ export async function DELETE(request: Request) {
     
     const response = await supabase.from(tableName).delete().eq('id', data.id);
 
-    return Response.json(response) 
+    return NextResponse.json(response) 
 }
