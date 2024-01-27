@@ -1,3 +1,5 @@
+const { url } = require('inspector');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -6,6 +8,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './website-components/**/*.{ts,tsx}',
   ],
   prefix: "",
   theme: {

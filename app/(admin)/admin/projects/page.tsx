@@ -123,7 +123,7 @@ export default function ProjectPage() {
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button
-                            variant={"secondary"}
+                            variant={"outline"}
                           >
                             <TrashIcon />
                           </Button>
@@ -137,7 +137,6 @@ export default function ProjectPage() {
                           </DialogHeader>
                           <DialogFooter className="mt-5">
                             <Button
-                              type="submit"
                               onClick={() => {
                                 deleteProject(d.id);
                               }}

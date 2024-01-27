@@ -9,19 +9,22 @@ import { useCallback, useReducer, useState } from "react";
 import { useRouter } from "next/navigation";
 import Select, { MultiValue, OptionProps } from "react-select";
 import { Textarea } from "@/components/ui/textarea";
+import { useForm, SubmitHandler } from "react-hook-form";
 
 type Variants = "blog" | "project";
+
+type Inputs = {
+  title: string;
+  content: string;
+  description: string;
+  tags: number;
+  cover_url: string;
+};
 
 interface BlogFormProps {
   id?: string;
   variant?: Variants;
-  value?: {
-    title: string;
-    content: string;
-    description: string;
-    tags: string[];
-    cover_url: string;
-  };
+  value?: Inputs;
 }
 
 const blogsTags = [
@@ -63,6 +66,19 @@ export default function BlogForm({
 }: BlogFormProps) {
   const router = useRouter();
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue
+  } = useForm<Inputs>({
+    defaultValues: {
+      title: value?.title || "",
+      description: value?.description || "",
+      cover_url: value?.cover_url || ""
+    }
+  });
+
   const [loading, setLoading] = useState(false);
   const [blogForm, setBlogForm] = useReducer(
     (prev: any, next: any) => {
@@ -81,8 +97,15 @@ export default function BlogForm({
     setBlogForm({ content: data.getJSON() });
   }, []);
 
-  const onSubmitBlog = async () => {
+  const onSubmitBlog: SubmitHandler<Inputs> = async (data) => {
     let req;
+    const blogData = {
+      title: data?.title || "",
+      content: blogForm?.content || "",
+      description: data?.description || "",
+      tags: blogForm?.tags || [],
+      cover_url: blogForm?.cover_url || "",
+    }
 
     setLoading(true);
 
@@ -92,7 +115,7 @@ export default function BlogForm({
         headers: {
           "Contet-type": "application/json",
         },
-        body: JSON.stringify(blogForm),
+        body: JSON.stringify(blogData),
       });
     } else {
       req = await fetch("/api/blogs", {
@@ -100,7 +123,7 @@ export default function BlogForm({
         headers: {
           "Contet-type": "application/json",
         },
-        body: JSON.stringify(blogForm),
+        body: JSON.stringify(blogData),
       });
     }
 
@@ -113,8 +136,16 @@ export default function BlogForm({
     }
   };
 
-  const onSubmitProject = async () => {
+  const onSubmitProject: SubmitHandler<Inputs> = async (data) => {    
     let req;
+
+    const ProjectData = {
+      title: data?.title || "",
+      content: blogForm?.content || "",
+      description: data?.description || "",
+      tags: blogForm?.tags || [],
+      cover_url: blogForm?.cover_url || "",
+    }
 
     setLoading(true);
 
@@ -124,7 +155,7 @@ export default function BlogForm({
         headers: {
           "Contet-type": "application/json",
         },
-        body: JSON.stringify(blogForm),
+        body: JSON.stringify(ProjectData),
       });
     } else {
       req = await fetch("/api/projects", {
@@ -132,7 +163,7 @@ export default function BlogForm({
         headers: {
           "Contet-type": "application/json",
         },
-        body: JSON.stringify(blogForm),
+        body: JSON.stringify(ProjectData),
       });
     }
 
@@ -146,20 +177,28 @@ export default function BlogForm({
   };
 
   return (
-    <>
+    <form
+      onSubmit={handleSubmit(
+        variant === "blog" ? onSubmitBlog : onSubmitProject
+      )}
+    >
       <div>
         <Label htmlFor="email" className="capitalize">
           {variant} Title
         </Label>
         <Input
-          type="email"
-          placeholder="Email"
-          value={blogForm.title}
-          onChange={(e) => {
-            setBlogForm({ title: e.target.value });
-          }}
-          className="mt-2"
+          type="text"
+          {...register("title", { required: true })}
+          placeholder="Title"
+          className={`mt-2 ${
+            errors.title ? "bg-red-100 border-red-500" : ""
+          }`}
         />
+        {errors.title && (
+          <span className="text-sm mt-1 text-red-500">
+            This field is required
+          </span>
+        )}
       </div>
       <div className="mt-5">
         <Label htmlFor="description" className="capitalize">
@@ -167,12 +206,16 @@ export default function BlogForm({
         </Label>
         <Textarea
           placeholder="Description"
-          value={blogForm.description}
-          onChange={(e) => {
-            setBlogForm({ description: e.target.value });
-          }}
-          className="mt-2"
+          {...register("description", { required: true })}
+          className={`mt-2 ${
+            errors.description ? "bg-red-100 border-red-500" : ""
+          }`}
         />
+        {errors.description && (
+          <span className="text-sm mt-1 text-red-500">
+            This field is required
+          </span>
+        )}
       </div>
       <div className="mt-5">
         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -187,25 +230,39 @@ export default function BlogForm({
               />
             )}
           </div>
-          <Input id="picture" type="file" onChange={async (e) => {
-            let files = (e.target as HTMLInputElement).files;
+          <input type="hidden" value={blogForm.cover_url} {...register("cover_url", { required: true })}/>
+          <Input
+            id="picture"
+            type="file"
+            className={`mt-2 ${
+              errors.cover_url ? "bg-red-100 border-red-500" : ""
+            }`}
+            onChange={async (e) => {
+              let files = (e.target as HTMLInputElement).files;
 
-            if(files && files?.length > 0) {
-              const file = files[0];
-              const response = await fetch("/api/upload", {
-                method: "POST",
-                headers: {
-                  "Content-type": file.type,
-                  "X-Vercel-Filename": file.name,
-                },
-                body: file,
-              }).then((res) => res.json());
-          
-              setBlogForm({
-                cover_url: response.url,
-              });
-            }
-          }} />
+              if (files && files?.length > 0) {
+                const file = files[0];
+                const response = await fetch("/api/upload", {
+                  method: "POST",
+                  headers: {
+                    "Content-type": file.type,
+                    "X-Vercel-Filename": file.name,
+                  },
+                  body: file,
+                }).then((res) => res.json());
+
+                setBlogForm({
+                  cover_url: response.url,
+                });
+                setValue("cover_url", response.url)
+              }
+            }}
+          />
+          {errors.cover_url && (
+            <span className="text-sm mt-1 text-red-500">
+              This field is required
+            </span>
+          )}
         </div>
       </div>
       <div className="mt-5">
@@ -230,7 +287,7 @@ export default function BlogForm({
           name="tags"
           options={blogsTags}
           onChange={(value: MultiValue<{ name: string }>) => {
-            if(value && value.length > 0) {
+            if (value && value.length > 0) {
               const tags = value.map((v: { name: string }) => v?.name);
 
               setBlogForm({ tags: tags });
@@ -251,12 +308,7 @@ export default function BlogForm({
         >
           Cancel
         </Button>
-        <Button
-          className="ml-5"
-          onClick={() => {
-            variant === "blog" ? onSubmitBlog() : onSubmitProject();
-          }}
-        >
+        <Button className="ml-5">
           {loading ? (
             <>
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
@@ -270,6 +322,6 @@ export default function BlogForm({
           )}
         </Button>
       </div>
-    </>
+    </form>
   );
 }

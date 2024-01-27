@@ -70,7 +70,23 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+
+  .website-bg-static::before {
+    content: '';
+    background-image: url("/images/bg.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: top left;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 }

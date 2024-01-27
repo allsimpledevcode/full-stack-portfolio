@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     const supabase = createClient(cookieStore);
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    const term = searchParams.get("term");
+    const term = searchParams.get("term") || "";
     const page = parseInt(searchParams.get("page") || '0');
     const limit = parseInt(searchParams.get("limit") || '10');
     // Start index from 0 
