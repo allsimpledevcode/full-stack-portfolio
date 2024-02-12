@@ -11,23 +11,23 @@ const config = {
     leftMenu: [
       {
         name: "Home",
-        id: '#home'
+        id: '/#home'
       },
       {
         name: "Skills",
-        id: '#skills'
+        id: '/#skills'
       },
       {
         name: "Portfolio",
-        id: '#portfolio'
+        id: '/#portfolio'
       },
       {
         name: "Blogs",
-        id: '#blogs'
+        id: '/#blogs'
       },
       {
         name: "Contact",
-        id: '#contact'
+        id: '/#contact'
       },
     ],
     rightMenu: [
