@@ -124,11 +124,11 @@ function Projects() {
                             {project.description}
                           </CardDescription>
                         </CardHeader>
-                        <CardContent className="flex aspect-square items-center justify-center mt-4">
+                        <CardContent className="fle items-center justify-center mt-4">
                           <Image
                             width={`300`}
                             height={300}
-                            src={project.cover_url}
+                            src={project.cover_url || ""}
                             alt="Project"
                           />
                         </CardContent>
